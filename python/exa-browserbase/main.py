@@ -4,6 +4,7 @@
 import asyncio
 import json
 import os
+import ssl
 from urllib.parse import urlparse
 
 from dotenv import load_dotenv
@@ -12,28 +13,40 @@ from playwright.async_api import async_playwright
 
 from stagehand import AsyncStagehand
 
+# Fix SSL certificate issue on Windows
+import certifi
+import urllib3
+urllib3.disable_warnings()
+
+# Create context and update flags before assigning to default
+ctx = ssl.create_default_context()
+ctx.check_hostname = False  # MUST be False to set CERT_NONE
+ctx.verify_mode = ssl.CERT_NONE
+
+ssl._create_default_https_context = lambda: ctx
+
 # Load environment variables from .env file
 # Required: BROWSERBASE_API_KEY, BROWSERBASE_PROJECT_ID, MODEL_API_KEY, EXA_API_KEY
 load_dotenv()
 
 # Candidate application details - customize these for your job search
 APPLICATION_DETAILS = {
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "linkedin_url": "https://linkedin.com/in/johndoe",
-    "resume_path": "./Dummy_CV.pdf",
-    "current_location": "San Francisco, CA",
+    "name": "Gaurav Singh",
+    "email": "gsingh.aiml@gmail.com",
+    "linkedin_url": "https://www.linkedin.com/in/gaurav-singh-dev/",
+    "resume_path": r"C:\Users\g_singh\Downloads\Gaurav_Singh.pdf",
+    "current_location": "Gurugram, Haryana, India",
     "willing_to_relocate": True,
-    "requires_sponsorship": False,
+    "requires_sponsorship": True,
     "visa_status": "",
-    "phone": "+1-555-123-4567",
-    "portfolio_url": "https://johndoe.dev",
-    "cover_letter": "I am excited to apply for this position...",
+    "phone": "+91-63976-35345",
+    "portfolio_url": "https://www.linkedin.com/in/gaurav-singh-dev/",
+    "cover_letter": "I'm seeking remote roles that allow me to contribute to innovative AI projects from India while collaborating with global teams.",
 }
 
 # Search configuration - modify to target different companies
 SEARCH_CONFIG = {
-    "company_query": "AI startups in SF",
+    "company_query": "remote fully remote AI engineer AI consultant data scientist jobs worldwide",
     "num_companies": 5,
     # Concurrency: set to False for sequential (works on all plans); True = concurrent (requires Startup or Developer plan or higher)
     "concurrent": True,
